@@ -1,0 +1,11 @@
+Description
+
+Simple spatial/geometric utilities in Python.
+
+Includes a QuadTree class for storing points.  
+
+Created as a Python learning project.  
+
+TODO:
+  Write tests
+  
