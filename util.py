@@ -121,36 +121,35 @@ class QuadTree:
 	    return get_nearest_point(pt, quad_node.points)
 	else:
 	    cur_pt = None
-	    cur_dist = ()
+	    cur_dist = float("inf")
 	    quad_ind = get_containing_quad(pt, quad_node.quads)
 	    if(quad_ind != -1):
 		cand_pt = self._find_near(pt, quad_node.quads[quad_ind])
-		cand_dist = point_dist(pt, cand_pt)
-		if(cand_dist < cur_dist):
-		    cur_dist = cand_dist
-		    cur_pt = cand_pt
+		if not (cand_pt is None):
+        	    cand_dist = point_dist(pt, cand_pt)
+        	    if(cand_dist < cur_dist):
+        	        cur_dist = cand_dist
+        	        cur_pt = cand_pt
 
             # rank 'other' quad nodes by dist to point
 	    # if that dist is < cur_dist, we need to search it
 	    cand_inds = [0, 1, 2, 3]
-	    cand_inds.remove(quad_ind)
+	    if (quad_ind != -1): 
+		cand_inds.remove(quad_ind)
+
 	    cand_quads = [quad_node.quads[i] for i in cand_inds]
 	    cand_quads.sort(lambda a, b:  cmp(get_dist_to_bounds(pt, a.bounds), get_dist_to_bounds(pt, b.bounds)))
 	    for cand_q in cand_quads:
 		pt_bnd_dist = get_dist_to_bounds(pt, cand_q.bounds)
 		if (pt_bnd_dist < cur_dist):
 		    cand_pt = self._find_near(pt, cand_q)
-		    cand_dist = point_dist(pt, cand_pt)
-		    if (cand_dist < cur_dist):
-			cur_dist = cand_dist
-			cur_pt = cand_pt
+		    if not (cand_pt is None):
+		        cand_dist = point_dist(pt, cand_pt)
+    		        if (cand_dist < cur_dist):
+    			    cur_dist = cand_dist
+    			    cur_pt = cand_pt
 
 	    return cur_pt
-
-
-	
-
-	
 
 
 def get_containing_quad(pt, quads):
@@ -167,7 +166,7 @@ def point_dist(pt1, pt2):
     return math.sqrt((diff_x * diff_x) + (diff_y * diff_y))
 
 def get_nearest_point(pt, pt_list):
-    cur_dist = ()
+    cur_dist = float("inf")
     cur_pt = None
     for cand_pt in pt_list:
 	cand_dist = point_dist(pt, cand_pt)
@@ -181,12 +180,17 @@ def get_nearest_point(pt, pt_list):
 def get_dist_to_bounds(pt, bounds):
     """ return the distance from the point to the closest intersecting 
         point along the perimeter of bounds. """
-    if (bounds.min_x <= pt[0] <= bounds.max_x):
+    if (contains(pt, bounds)):
+	return min([abs(pt[1] - bounds.min_y), 
+	            abs(pt[1] - bounds.max_y), 
+	            abs(pt[0] - bounds.min_x), 
+	            abs(pt[0] - bounds.max_x)])
+    elif (bounds.min_x <= pt[0] <= bounds.max_x):
 	return min([abs(pt[1] - bounds.min_y), abs(pt[1] - bounds.max_y)])
     elif (bounds.min_y <= pt[1] <= bounds.max_y):
 	return min([abs(pt[0] - bounds.min_x), abs(pt[0] - bounds.max_x)])
     else:
-	return get_nearest_point(pt, bounds.get_corners())
+	return point_dist(pt, get_nearest_point(pt, bounds.get_corners()))
     
 
 def contains(pt, bounds):
