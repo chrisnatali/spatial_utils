@@ -32,6 +32,28 @@ class TestUtil(unittest.TestCase):
 	self.assertTrue(qt.find_nearest(pt2) == pts[1])
 	self.assertTrue(qt.find_nearest(pt3) == pts[2])
 
+    def test_obj_find(self):
+	def as_pt(pt):
+	    return [pt.x, pt.y]
+
+        class SimplePoint:
+	    def __init__(self, x, y):
+		self.x = x
+		self.y = y
+
+            def __str__(self):
+		return "{x}, {y}".format(x=self.x, y=self.y)
+
+	qt = util.QuadTree(1, [0, 0], [100, 100], lambda obj: [obj.x, obj.y])
+	sp1 = SimplePoint(10, 20)
+	sp2 = SimplePoint(90, 90)
+	
+	sp3 = [5, 5]
+	qt.add(sp1)
+	qt.add(sp2)
+
+	self.assertTrue(qt.find_nearest(sp3) == sp1)
+
 
     def test_large_find(self):
 	qt = util.QuadTree(20, [0, 0], [10000, 10000])
