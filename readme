@@ -4,7 +4,7 @@ Simple spatial/geometric utilities in Python.
 
 Includes a QuadTree class for storing points.  
 
-Created as a Python learning project.  
+This project was undertaken to learn Python.
 
 NOTE:  This QuadTree does not consider spherical (earth-based) 
 coordinates.
