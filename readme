@@ -6,6 +6,9 @@ Includes a QuadTree class for storing points.
 
 Created as a Python learning project.  
 
+NOTE:  This QuadTree does not consider spherical (earth-based) 
+coordinates.
+
 TODO:
   Write tests
   
