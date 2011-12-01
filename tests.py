@@ -1,5 +1,5 @@
 import unittest
-import util
+import quad_tree
 
 
 class TestUtil(unittest.TestCase):
@@ -8,7 +8,7 @@ class TestUtil(unittest.TestCase):
         pass
 
     def test_negative_bounds(self):
-        qt = util.QuadTree(2, [-100, -100], [-10, -10])
+        qt = quad_tree.QuadTree(2, [-100, -100], [-10, -10])
         qt.add([-97, -90])
         qt.add([-20, -10])
         qt.add([-20.34, -50.123])
@@ -16,7 +16,7 @@ class TestUtil(unittest.TestCase):
 
 
     def test_simple_find(self):
-        qt = util.QuadTree(1, [-100, -100], [100, 100])
+        qt = quad_tree.QuadTree(1, [-100, -100], [100, 100])
         pts = [[-90, -90], 
                [-10, 10],
                [10, -10], 
@@ -44,7 +44,7 @@ class TestUtil(unittest.TestCase):
             def __str__(self):
                 return "{x}, {y}".format(x=self.x, y=self.y)
 
-        qt = util.QuadTree(1, [0, 0], [100, 100], lambda obj: [obj.x, obj.y])
+        qt = quad_tree.QuadTree(1, [0, 0], [100, 100], lambda obj: [obj.x, obj.y])
         sp1 = SimplePoint(10, 20)
         sp2 = SimplePoint(90, 90)
         
@@ -56,7 +56,7 @@ class TestUtil(unittest.TestCase):
 
 
     def test_large_find(self):
-        qt = util.QuadTree(20, [0, 0], [10000, 10000])
+        qt = quad_tree.QuadTree(20, [0, 0], [10000, 10000])
        
         import numpy
         to_x = numpy.random.rand(1000) * 10000
@@ -70,7 +70,7 @@ class TestUtil(unittest.TestCase):
         for pt in to_pts: qt.add(pt)
 
         near_pts_qt = [qt.find_nearest(from_pt) for from_pt in from_pts]
-        near_pts_normal = [util.get_nearest_point(from_pt, to_pts) 
+        near_pts_normal = [quad_tree.get_nearest_point(from_pt, to_pts) 
                            for from_pt in from_pts]
         
         #make sure these 2 arrays match
@@ -84,20 +84,20 @@ class TestUtil(unittest.TestCase):
         r2 = [0, 10]
         r3 = [-100, -50]
         r4 = [-100, -10]
-        self.assertTrue(util.overlaps(r1, r2))
-        self.assertTrue(not util.overlaps(r2, r3))
-        self.assertTrue(util.overlaps(r1, r4))
+        self.assertTrue(quad_tree.overlaps(r1, r2))
+        self.assertTrue(not quad_tree.overlaps(r2, r3))
+        self.assertTrue(quad_tree.overlaps(r1, r4))
 
 
     def test_bounds(self):
-        bds1 = util.Bounds([0, 0], [100, 100])
+        bds1 = quad_tree.Bounds([0, 0], [100, 100])
         pt1 = [10, 25]
         pt2 = [200, 200]
-        self.assertTrue(util.get_dist_to_bounds(pt1, bds1) == pt1[0])
-        self.assertTrue(util.get_dist_to_bounds(pt2, bds1) == 
-                        util.point_dist(pt2, bds1.get_corners()[3]))
-        self.assertTrue(util.contains(pt1, bds1))
-        self.assertTrue(not util.contains(pt2, bds1))
+        self.assertTrue(quad_tree.get_dist_to_bounds(pt1, bds1) == pt1[0])
+        self.assertTrue(quad_tree.get_dist_to_bounds(pt2, bds1) == 
+                        quad_tree.point_dist(pt2, bds1.get_corners()[3]))
+        self.assertTrue(quad_tree.contains(pt1, bds1))
+        self.assertTrue(not quad_tree.contains(pt2, bds1))
 
 
     def runTest(self):
