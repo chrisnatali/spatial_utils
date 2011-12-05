@@ -1,11 +1,17 @@
 Description
 
-Simple spatial/geometric utilities in Python.
+Various Python utilities that don't yet have a stable home.
+See imports for dependencies.
 
-Includes a QuadTree class for storing points.  
+quad_tree:  in-memory QuadTree class/functions for storing/finding points
 
-This project was undertaken to learn Python.
+cluster:  Classes for clustering of point sets (sped up via quad_tree)
 
-NOTE:  This QuadTree does not consider spherical (earth-based) 
-coordinates.
+rpy_cluster:  Sample that uses R clustering function from within Python
+
+pg_import:  Classes to load csv file stream as points into PostGIS table
+            (much faster than individually inserting rows)
+
+tests:  Only partially complete.  
+
 

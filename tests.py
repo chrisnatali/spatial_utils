@@ -1,6 +1,6 @@
 import unittest
 import quad_tree
-
+import cluster
 
 class TestUtil(unittest.TestCase):
 
@@ -99,9 +99,16 @@ class TestUtil(unittest.TestCase):
         self.assertTrue(quad_tree.contains(pt1, bds1))
         self.assertTrue(not quad_tree.contains(pt2, bds1))
 
-
-    def runTest(self):
-        pass
+    
+    def test_cluster(self):
+        x_vals = range(1, 21)
+        y_vals = range(1, 21)
+        xys = zip(x_vals, y_vals)
+        helper = cluster.KMeansHelper()
+        clusterer = cluster.KMeans(4, helper)
+        (clusters, assignments) = clusterer.assign_clusters(xys)
+        self.assertTrue(clusters == [[2, 2], [6, 6], [11, 11], [17, 17]])
+        
 
 if __name__ == '__main__':
     unittest.main()
