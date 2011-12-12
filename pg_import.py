@@ -1,5 +1,4 @@
 import csv
-import StringIO
 import psycopg2.extras
 import shapely.wkb
 
@@ -43,13 +42,12 @@ class CSVToCSV_WKT_Point(object):
         index 0, y is index 1)"""
         self.point_columns = point_columns
 
-    def translate(self, csv_file_stream):
+    def translate(self, in_file_stream, out_file_stream):
         """ Translates csv with lat,lon as separate columns into a csv
         with lat,lon as a single WKT POINT column.  
-        Returns an IO stream with the csv as lines to be stored."""
-        tmpIO = StringIO.StringIO()
+        writes to an IO stream the csv as lines to be stored."""
         # csv_file should be open in read 'Universal' mode
-        csv_reader = csv.reader(csv_file_stream)
+        csv_reader = csv.reader(in_file_stream)
         for row in csv_reader:
             if (len(row) == 0):
                 continue
@@ -58,9 +56,8 @@ class CSVToCSV_WKT_Point(object):
             col_inds = set(range(0, len(row))).difference(set([self.point_columns[0], self.point_columns[1]]))
 
             for col in col_inds:
-                tmpIO.write(row[col])
-                tmpIO.write(',')
+                out_file_stream.write(row[col])
+                out_file_stream.write(',')
             
-            tmpIO.write('%s\n' % point)
+            out_file_stream.write('%s\n' % point)
         
-        return tmpIO
