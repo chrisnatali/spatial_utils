@@ -1,6 +1,8 @@
 import unittest
+import numpy
 import quad_tree
-import cluster
+import kmeans_py
+import cluster_r
 
 class TestUtil(unittest.TestCase):
 
@@ -58,7 +60,6 @@ class TestUtil(unittest.TestCase):
     def test_large_find(self):
         qt = quad_tree.QuadTree(20, [0, 0], [10000, 10000])
        
-        import numpy
         to_x = numpy.random.rand(1000) * 10000
         to_y = numpy.random.rand(1000) * 10000
         to_pts = numpy.column_stack((to_x, to_y))
@@ -104,10 +105,18 @@ class TestUtil(unittest.TestCase):
         x_vals = range(1, 21)
         y_vals = range(1, 21)
         xys = zip(x_vals, y_vals)
-        helper = cluster.KMeansHelper()
-        clusterer = cluster.KMeans(4, helper)
+        helper = kmeans_py.KMeansHelper()
+        clusterer = kmeans_py.KMeans(4, helper)
         (clusters, assignments) = clusterer.assign_clusters(xys)
         self.assertTrue(clusters == [[2, 2], [6, 6], [11, 11], [17, 17]])
+
+    def test_hclust(self):
+        x_vals = numpy.random.rand(10)
+        y_vals = numpy.random.rand(10)
+        xys = zip(x_vals, y_vals)
+        distance = 0.2 
+        clusters = cluster_r.hclust(xys, distance, "single")
+        # print(clusters)
         
 
 if __name__ == '__main__':
