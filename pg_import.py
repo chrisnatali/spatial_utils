@@ -36,11 +36,14 @@ class PGImport(object):
 
 class CSVToCSV_WKT_Point(object):
 
-    def __init__(self, point_columns):
+    def __init__(self, point_columns, new_columns={}):
         """ initialise with point_columns, which represents the column
         number of the x, y coordinates within the input csv (x is
-        index 0, y is index 1)"""
+        index 0, y is index 1).
+        new_columns is a hash of column_number -> repeated_value to
+        be added for each row."""
         self.point_columns = point_columns
+        self.new_columns = new_columns
 
     def translate(self, in_file_stream, out_file_stream):
         """ Translates csv with lat,lon as separate columns into a csv
@@ -54,10 +57,14 @@ class CSVToCSV_WKT_Point(object):
 
             point = 'POINT(%s %s)' % (row[self.point_columns[0]], row[self.point_columns[1]])
             col_inds = set(range(0, len(row))).difference(set([self.point_columns[0], self.point_columns[1]]))
-
+            col_inds = col_inds.union(set(self.new_columns.keys()))
+ 
             for col in col_inds:
-                out_file_stream.write(row[col])
+                if(self.new_columns.has_key(col)):
+                    out_file_stream.write(self.new_columns[col])
+                else:
+                    out_file_stream.write(row[col])
                 out_file_stream.write(',')
-            
+                 
             out_file_stream.write('%s\n' % point)
         

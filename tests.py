@@ -3,6 +3,8 @@ import numpy
 import quad_tree
 import kmeans_py
 import cluster_r
+import StringIO
+import pg_import
 
 class TestUtil(unittest.TestCase):
 
@@ -117,7 +119,24 @@ class TestUtil(unittest.TestCase):
         distance = 0.2 
         clusters = cluster_r.hclust(xys, distance, "single")
         # print(clusters)
-        
+
+    def test_csvtocsv_wkt(self):
+        csv_string = '''
+        1,1,0.0,1.0
+        2,2,0.1,1.1
+        3,3,0.2,1.2'''
+
+        result_csv_string = '''
+        1,1,9,POINT(0.0 1.0)
+        2,2,9,POINT(0.1 1.1)
+        3,3,9,POINT(0.2 1.2)'''
+
+        translator = pg_import.CSVToCSV_WKT_Point((2, 3), {2: 9})
+        in_file = StringIO.StringIO(csv_string)
+        out_file = StringIO.StringIO()
+        translator.translate(in_file, out_file)
+        self.assertTrue(out_file.getvalue().strip() == result_csv_string.strip())
+         
 
 if __name__ == '__main__':
     unittest.main()
