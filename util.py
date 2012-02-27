@@ -2,6 +2,7 @@ import numpy
 import csv
 import rpy2
 from rpy2.robjects import r
+import math
 
 def rand_pts(n, scale):
     """ Generate n random x,y points with values from 0-1 scaled by scale value"""
@@ -40,3 +41,28 @@ def dists_to_pt(pts, pt, use_great_circle=True):
     return dists_to_pt
 
 
+def get_bounds(pts):
+    """ Returns low-left x, low-left y, up-right x, up-right y """
+    np_pts = numpy.array(pts)
+    x_pts = np_pts[:, 0]
+    y_pts = np_pts[:, 1]
+    return [min(x_pts), min(y_pts), max(x_pts), max(y_pts)]
+
+
+def compute_spherical_distance(pt1, pt2):
+    """
+    http://en.wikipedia.org/wiki/Great-circle_distance
+    """
+    # Define
+    convertDegreesToRadians = lambda x: x * math.pi / 180
+    # Load
+    longitude1, latitude1 = map(convertDegreesToRadians, pt1)
+    longitude2, latitude2 = map(convertDegreesToRadians, pt2)
+    # Initialize
+    longitudeDelta = longitude2 - longitude1
+    earthRadiusInMeters = 6371010
+    # Prepare
+    y = math.sqrt(math.pow(math.cos(latitude2) * math.sin(longitudeDelta), 2) + math.pow(math.cos(latitude1) * math.sin(latitude2) - math.sin(latitude1) * math.cos(latitude2) * math.cos(longitudeDelta), 2))
+    x = math.sin(latitude1) * math.sin(latitude2) + math.cos(latitude1) * math.cos(latitude2) * math.cos(longitudeDelta)
+    # Return
+    return earthRadiusInMeters * math.atan2(y, x)
