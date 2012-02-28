@@ -112,6 +112,7 @@ class TestUtil(unittest.TestCase):
         (clusters, assignments) = clusterer.assign_clusters(xys)
         self.assertTrue(clusters == [[2, 2], [6, 6], [11, 11], [17, 17]])
 
+
     def test_hclust(self):
         x_vals = numpy.random.rand(10)
         y_vals = numpy.random.rand(10)
@@ -120,6 +121,7 @@ class TestUtil(unittest.TestCase):
         clusters = cluster_r.hclust(xys, distance, "single")
         # print(clusters)
 
+        
     def test_csvtocsv_wkt(self):
         csv_string = '''
         1,1,0.0,1.0
@@ -127,16 +129,17 @@ class TestUtil(unittest.TestCase):
         3,3,0.2,1.2'''
 
         result_csv_string = '''
-        1,1,9,POINT(0.0 1.0)
-        2,2,9,POINT(0.1 1.1)
-        3,3,9,POINT(0.2 1.2)'''
+        1,1,9,SRID=4326;POINT(0.0 1.0)
+        2,2,9,SRID=4326;POINT(0.1 1.1)
+        3,3,9,SRID=4326;POINT(0.2 1.2)'''
 
         translator = pg_import.CSVToCSV_WKT_Point((2, 3), {2: 9})
         in_file = StringIO.StringIO(csv_string)
         out_file = StringIO.StringIO()
-        translator.translate(in_file, out_file)
+        translator.translate(in_file, out_file, srid=4326)
         self.assertTrue(out_file.getvalue().strip() == result_csv_string.strip())
-         
+          
+
 
 if __name__ == '__main__':
     unittest.main()
