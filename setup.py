@@ -7,10 +7,10 @@ README = open(os.path.join(here, 'readme')).read()
 
 requires = [
     'Shapely',
-    'rpy2',
+    'rpy2'
     ]
 
-setup(name='spatial_utils',
+setup(name='SpatialUtils',
       version='0.0',
       description='Spatial Utilties',
       long_description = README,
