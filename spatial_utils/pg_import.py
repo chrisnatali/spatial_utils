@@ -59,11 +59,11 @@ class CSVToCSV_WKT_Point(object):
             col_inds = set(range(0, len(row))).difference(set([self.point_columns[0], self.point_columns[1]]))
             col_inds = col_inds.union(set(self.new_columns.keys()))
  
-            for col in col_inds:
-                if(self.new_columns.has_key(col)):
-                    out_file_stream.write(self.new_columns[col])
+            for key in self.new_columns:
+                if(self.new_columns[key].has_key('value')):
+                    out_file_stream.write(self.new_columns[key]['value'])
                 else:
-                    out_file_stream.write(row[col])
+                    out_file_stream.write(row[self.new_columns[key]['column']])
                 out_file_stream.write(',')
                  
             out_file_stream.write('%s\n' % point)
