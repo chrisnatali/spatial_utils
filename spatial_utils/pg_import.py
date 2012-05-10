@@ -55,9 +55,8 @@ class CSVToCSV_WKT_Point(object):
             if (len(row) == 0):
                 continue
 
-            point = 'SRID=%s;POINT(%s %s)' % (srid, row[self.point_columns[0]], row[self.point_columns[1]])
-            col_inds = set(range(0, len(row))).difference(set([self.point_columns[0], self.point_columns[1]]))
-            col_inds = col_inds.union(set(self.new_columns.keys()))
+            point = 'SRID=%s;POINT(%s %s)' % (srid, row[self.point_columns[0]],
+                    row[self.point_columns[1]])
  
             for key in self.new_columns:
                 if(self.new_columns[key].has_key('value')):
