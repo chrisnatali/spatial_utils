@@ -1,3 +1,10 @@
+-- Query to select nodes and associated line length via 
+-- "half length of segment attributed to each connecting node"
+-- method. 
+-- Assumes nodes and nwk_p (the network) tables in a postgis 2.0
+-- enabled DB.
+-- (Note the use of ST_GeogFromWKB.  This tells ST_Length to use 
+-- spherical distance)
 SELECT 
   nodes.cartodb_id, 
   nodes.fid, 
