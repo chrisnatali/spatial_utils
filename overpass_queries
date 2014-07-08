@@ -1,0 +1,22 @@
+# Queries to retrieve all nodes associated with ways named "appletree" 
+# in defined bbox
+
+# Overpass XML QL:
+<query type="way">
+  <has-kv k="name" v="appletree"/>
+  <bbox-query s="40.803650350470704" w="-73.96285772323608" n="40.81212837217981" e="-73.94969344139099"/><!--this is auto-completed with the
+                   current map view coordinates.-->
+</query>
+<recurse type="way-node"/>
+<print/>
+
+# Overpass QL:
+way
+  ["name"="appletree"]
+  (40.803650350470704,-73.96285772323608,40.81212837217981,-73.94969344139099);
+node(w);
+out;
+
+# Compact Overpass QL:
+way["name"="appletree"](40.803650350470704,-73.96285772323608,40.81212837217981,-73.94969344139099);node(w);out;;
+
