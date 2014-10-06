@@ -1,19 +1,30 @@
-Using SP, igraph and networkplanner libraries to analyze a point dataset
-------------------------------------------------------------------------
+Estimating the cost of an LV Network for a set of Households
+============================================================
 
-Load point dataset from csv and map it 
-```{r load, fig.height=3, message=F, warning=F}
+This example is related to the networkplanner library and uses
+minor functions from it, but is more broad than the library as it
+demonstrates the utility of igraph and SP packages as well.  
+
+---
+
+Load point dataset from csv and map it.
+These points represent households clustered in several villages.
+```{r load, fig.width=12, fig.height=6, message=F, warning=F}
 require(sp)
 require(methods)
 require(RColorBrewer)
 csv_file <- "data/mmr_hh_spatial.csv"
 hh_df <- read.csv(csv_file)
 
-mapping_from <- c("household._gps_longitude", "household._gps_latitude", "Household_geocharacterization.hh_size", "Household_geocharacterization.hh_rooms")
+mapping_from <- c("household._gps_longitude", 
+                  "household._gps_latitude", 
+                  "Household_geocharacterization.hh_size", 
+                  "Household_geocharacterization.hh_rooms")
 mapping_to <- c("X", "Y", "hh_size", "hh_rooms")
 hh_df[,mapping_to] <- hh_df[,mapping_from]
 hh_df <- hh_df[,mapping_to]
-# transform the points and hh_size from factors to numerics (NOT VERY INTUITIVE)
+
+# transform the points and hh_size from factors to numerics
 unfactor_hh_size <- function(hh_size) {
     hh_size_num <- suppressWarnings(as.numeric(levels(hh_size)))
     hh_size_num[hh_size]
@@ -38,7 +49,8 @@ colors[is.na(colors)] <- "#FFFFFF"
 plot(hh_sp_df, pch=21, col="#000000", bg=colors, lwd=0.2)
 ```
 
-Calculate the MST via igraph and plot it 
+As a first pass at an LV network, calculate the MST connecting all 
+points via igraph and plot the graph.
 ```{r create_mst, fig.width=12, fig.height=12, message=F, warning=F}
 require(igraph)
 require(geosphere)
@@ -57,7 +69,7 @@ plot(mst_g, vertex.size=4, vertex.label="")
 
 ```
 
-Calculate costs associated with creating an LV network
+Calculate mean edge length and costs associated with the MST based network
 ```{r calc_costs, message=F, warning=F}
 network_span <- sum(E(mst_g)$weight)
 
@@ -95,8 +107,9 @@ cat("mean edge length (meters): ", mean_edge_len, "\n")
 cat("mst based cost (dollars): ", mst_based_cost, "\n")
 ```
 
-Construct the NetworkPlan and map it
-```{r networkplan, fig.width=12, fig.height=3, message=F, warning=F}
+Construct the NetworkPlan from the MST based graph and map it.
+The map looks simple at this zoom level, but the village subnets are quite detailed.
+```{r networkplan, fig.width=12, fig.height=6, message=F, warning=F}
 # map points to vertices in graph
 require(networkplanner)
 np <- create_networkplan_from_graph(mst_g, hh_df, proj)
@@ -108,7 +121,8 @@ edge_sp_df <- sp_dfs$edges
 plot(edge_sp_df)
 ```
 
-Reduce costs by substituting lower cost transformers for expensive edges
+Reduce costs by substituting lower cost transformers for expensive edges.
+Mean edge length and cost of the network are reduced significantly.
 ```{r cost_reduction, message=F, warning=F}
 # find the 'expensive' edges and remove 'em in favor of transformers
 expensive_edge_df <- mst_edge_df[mst_edge_df$lv_cost > MV_TO_LV_XFRM_COST_D,]
@@ -129,20 +143,22 @@ cat("reduced mst based cost (dollars): ", reduced_mst_based_cost, "\n")
 
 ```
 
-Construct the Reduced NetworkPlan and map it
-```{r reduced_networkplan, fig.width=12, fig.height=3, message=F, warning=F}
+Construct the Reduced NetworkPlan and map it on top of the MST based map.
+Note the reduced network in red.
+```{r reduced_networkplan, fig.width=12, fig.height=6, message=F, warning=F}
 # map points to vertices in graph
-np <- create_networkplan_from_graph(reduced_mst_g, hh_df, proj)
+reduced_np <- create_networkplan_from_graph(reduced_mst_g, hh_df, proj)
 
 # get spatial dataframes to map
-sp_dfs <- as_spatial_dataframes(np)
-edge_sp_df <- sp_dfs$edges
+reduced_sp_dfs <- as_spatial_dataframes(reduced_np)
+reduced_edge_sp_df <- reduced_sp_dfs$edges
 
 plot(edge_sp_df)
+lines(reduced_edge_sp_df, col="red")
 
 ```
 
-Decompose the reduced network and map the largest component
+Decompose the reduced network into its connected components and map the largest component
 ```{r decompose, fig.width=12, fig.height=12, message=F, warning=F}
 components <- decompose.graph(reduced_mst_g)
 component_sizes <- sapply(components, function(g) { length(E(g)) })
@@ -160,4 +176,5 @@ color_indices <- findInterval(edge_sp_df@data$lv_cost, dist_classes)
 colors <- brewer.pal(5, "BuGn")[color_indices]
 
 plot(edge_sp_df, col=colors)
+points(hh_sp_df)
 ```
