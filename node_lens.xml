@@ -1,0 +1,30 @@
+<!DOCTYPE Map>
+<!-- Sample Mapnik XML template by Dane Springmeyer -->
+<Map srs="+proj=latlong +datum=WGS84" background-color="white" minimum-version="0.7.2">
+  
+  <Style name="node_pts">
+     <Rule>
+      <PointSymbolizer fill="darkred"/>
+     </Rule>
+  </Style>
+    
+  <Style name="node_labels">
+     <Rule>
+      <TextSymbolizer size="7" fill="black" face-name="DejaVu Sans Bold" halo-fill="#DFDBE3" halo-radius="1" wrap-width="20">[num_conns]</TextSymbolizer>
+     </Rule>
+  </Style>
+  
+  <Layer name="node_lens" srs="+proj=latlong +datum=WGS84" status="on">
+    <!-- Style order determines layering hierarchy -->
+    <!-- Labels go on top so they are listed second -->
+    <StyleName>node_pts</StyleName>
+    <StyleName>node_labels</StyleName>
+    <Datasource>
+      <Parameter name="dbname">pgis_tmp</Parameter>
+      <Parameter name="user">cjn</Parameter>
+      <Parameter name="table">node_lens</Parameter>
+      <Parameter name="geometry_field">geom</Parameter>
+    </Datasource>
+  </Layer>
+
+</Map>
