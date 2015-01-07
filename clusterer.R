@@ -24,7 +24,7 @@ dists <- as.dist(sp_dists)
 # cluster
 # calculate the agglomerative cluster tree to a root
 tree <- hclust(dists, method="average") 
-# clut the tree at a specified "height" (a distance in km)
+# cut the tree at a specified "height" (a distance in km)
 clusts <- cutree(tree, h=cluster_dist)
 
 # create a 3 col empty matrix for each cluster
@@ -38,7 +38,7 @@ for (j in 1:length(clusts)) {
 # create df for results
 results <- data.frame(lat=double(0), lon=double(0), mid=double(0), count=integer(0))
 
-# itereate over clusters, calculating representative points (their mean) and mean interpoint distance
+# iterate over clusters, calculating representative points (their mean) and mean interpoint distance
 for (k in 1:length(cluster_list)) {
     cluster <- cluster_list[[k]]
     len <- length(cluster)/2
