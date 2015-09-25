@@ -14,11 +14,11 @@ ax = fig.gca(projection='3d')
 
 u = Vector((3, 2, -5))
 f = Vector((2, -1, -1))
-work_vector = u.dot_onto(f)
+work_vector = f.dot_onto(u)
 
-plot_vector(u, ax, color='blue')
+plot_vector(f, ax, color='blue')
 plot_vector(work_vector, ax, color='green')
-plot_vector(f, ax, color='red')
+plot_vector(u, ax, color='red')
 
 plt.show()
 

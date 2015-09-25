@@ -5,7 +5,7 @@ from itertools import tee, izip
 def deg_to_rad(deg):
     return deg * math.pi / 180.0  
 
-EARTH_RADIUS = 6371010
+EARTH_RADIUS_METERS = 6371010
 
 def spherical_distance_vicenty(lon1, lat1, lon2, lat2):
     """
@@ -29,10 +29,8 @@ def spherical_distance_vicenty(lon1, lat1, lon2, lat2):
     x = math.sin(lat1_rad) * math.sin(lat2_rad) + \
         math.cos(lat1_rad) * math.cos(lat2_rad) * math.cos(lon_delta)
 
-    print "y %s x %s" % (y, x)
     angle = math.atan2(y, x)
-    print "angle: %s" % angle
-    return EARTH_RADIUS * angle
+    return angle * EARTH_RADIUS_METERS 
     
 
 def spherical_distance_haversine(lon1, lat1, lon2, lat2):
@@ -50,8 +48,7 @@ def spherical_distance_haversine(lon1, lat1, lon2, lat2):
     inverse_angle = (np.sin(lat_delta / 2) ** 2 + np.cos(lat2_rad) *
                      np.cos(lat1_rad) * np.sin(lon_delta / 2) ** 2)
     haversine_angle = 2 * np.arcsin(np.sqrt(inverse_angle))
-    print "angle: %s" % haversine_angle
-    return haversine_angle * EARTH_RADIUS
+    return haversine_angle * EARTH_RADIUS_METERS
 
 def pairwise(iterable):
     "s -> (s0,s1), (s1,s2), (s2, s3), ..."
@@ -64,8 +61,6 @@ def linestring_distances(linestring, dist_fun="v"):
     point_arrays = np.transpose(linestring.xy)
 
     def dist_by_pt_arrays(p0, p1):
-        print "p0 %s" % p0
-        print "p1 %s" % p1
         if(dist_fun == "h"):
             return spherical_distance_haversine(p0[0], p0[1], p1[0], p1[1])
         else:
