@@ -1,6 +1,9 @@
 #!/usr/bin/env Rscript
 # script to calculate geo-spherical surface areas for bounding boxes
 # bounding boxes passed in as csv via stdin
+# 
+# input row format:
+# minlon,minlat,maxlon,maxlat
 #
 # example run
 # ```
